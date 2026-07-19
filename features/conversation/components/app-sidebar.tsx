@@ -54,10 +54,9 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { data: conversations, isLoading } = useConversations();
 
-  
-// Get the active conversation id from the pathname (e.g. /c/123)
-// pathname.split("/")[2] is the third part of the pathname (the conversation id)
-//  firstparam = / , secondparam = c , thirdparam = 123
+  // Get the active conversation id from the pathname (e.g. /c/123)
+  // pathname.split("/")[2] is the third part of the pathname (the conversation id)
+  //  firstparam = / , secondparam = c , thirdparam = 123
   const activeId = pathname.startsWith("/c/")
     ? pathname.split("/")[2]
     : undefined;
@@ -161,7 +160,7 @@ function ChatItem({
 }) {
   const updateConversation = useUpdateConversation();
   const deleteConversation = useDeleteConversation(
-    isActive ? conversation.id : undefined
+    isActive ? conversation.id : undefined,
   );
 
   /** Prompts the user to rename the conversation and persists the new title. */

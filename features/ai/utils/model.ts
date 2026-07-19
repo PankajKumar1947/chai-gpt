@@ -9,5 +9,5 @@ export const DEFAULT_CHAT_MODEL = "mistral-large-latest";
  * @param modelId - Optional model identifier; falls back to {@link DEFAULT_CHAT_MODEL}.
  */
 export function getChatModel(modelId?: string | null) {
-    return mistral(modelId || DEFAULT_CHAT_MODEL)
+  return mistral(modelId || DEFAULT_CHAT_MODEL);
 }

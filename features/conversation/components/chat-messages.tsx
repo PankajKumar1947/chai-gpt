@@ -50,18 +50,32 @@ type ChatMessagesProps = {
 interface WebSearchToolPart {
   type: "tool-webSearch";
   toolCallId: string;
-  state: "input-streaming" | "input-available" | "approval-requested" | "approval-responded" | "output-available" | "output-error" | "output-denied";
+  state:
+    | "input-streaming"
+    | "input-available"
+    | "approval-requested"
+    | "approval-responded"
+    | "output-available"
+    | "output-error"
+    | "output-denied";
   input: { query: string };
-  output?: Array<{ title?: string; url: string; content?: string }> | { error?: string };
+  output?:
+    | Array<{ title?: string; url: string; content?: string }>
+    | { error?: string };
   errorText?: string;
 }
 
 /**
  * Renders the conversation message list with markdown responses and a loading indicator.
  */
-export function ChatMessages({ messages, status, conversationId, setMessages, regenerate }: ChatMessagesProps) {
-  const isWaiting =
-    status === "submitted" && messages.at(-1)?.role === "user";
+export function ChatMessages({
+  messages,
+  status,
+  conversationId,
+  setMessages,
+  regenerate,
+}: ChatMessagesProps) {
+  const isWaiting = status === "submitted" && messages.at(-1)?.role === "user";
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -120,7 +134,9 @@ export function ChatMessages({ messages, status, conversationId, setMessages, re
                         <GlobeIcon className="h-4.5 w-4.5 text-emerald-500" />
                       )}
                       <span className="font-medium">
-                        {isSearching ? "Searching the web for:" : "Searched the web for:"}
+                        {isSearching
+                          ? "Searching the web for:"
+                          : "Searched the web for:"}
                       </span>
                       <span className="italic font-semibold text-foreground">
                         "{query}"
@@ -133,21 +149,36 @@ export function ChatMessages({ messages, status, conversationId, setMessages, re
                         </span>
                         <div className="flex flex-col gap-1 max-h-36 overflow-y-auto">
                           {Array.isArray(toolPart.output) ? (
-                            toolPart.output.slice(0, 3).map((res: { title?: string; url: string; content?: string }, idx: number) => (
-                              <a
-                                key={idx}
-                                href={res.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-between gap-2 p-1.5 rounded hover:bg-muted transition-colors text-blue-600 dark:text-blue-400 font-medium"
-                              >
-                                <span className="truncate">{res.title || res.url}</span>
-                                <ExternalLinkIcon className="h-3 w-3 shrink-0 text-muted-foreground" />
-                              </a>
-                            ))
+                            toolPart.output
+                              .slice(0, 3)
+                              .map(
+                                (
+                                  res: {
+                                    title?: string;
+                                    url: string;
+                                    content?: string;
+                                  },
+                                  idx: number,
+                                ) => (
+                                  <a
+                                    key={idx}
+                                    href={res.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-between gap-2 p-1.5 rounded hover:bg-muted transition-colors text-blue-600 dark:text-blue-400 font-medium"
+                                  >
+                                    <span className="truncate">
+                                      {res.title || res.url}
+                                    </span>
+                                    <ExternalLinkIcon className="h-3 w-3 shrink-0 text-muted-foreground" />
+                                  </a>
+                                ),
+                              )
                           ) : (
                             <span className="text-destructive">
-                              {"error" in toolPart.output ? toolPart.output.error : "Failed to retrieve results"}
+                              {"error" in toolPart.output
+                                ? toolPart.output.error
+                                : "Failed to retrieve results"}
                             </span>
                           )}
                         </div>
@@ -155,7 +186,8 @@ export function ChatMessages({ messages, status, conversationId, setMessages, re
                     )}
                     {hasError && (
                       <div className="flex flex-col gap-1.5 border-t pt-2 mt-1 text-destructive font-medium">
-                        {toolPart.errorText || "An error occurred during search"}
+                        {toolPart.errorText ||
+                          "An error occurred during search"}
                       </div>
                     )}
                   </div>
@@ -173,34 +205,32 @@ export function ChatMessages({ messages, status, conversationId, setMessages, re
                 onCancel={() => setEditingId(null)}
                 regenerate={regenerate}
               />
-            ) : (
-              getMessageText(message) ? (
-                <div className="relative group/content flex flex-col gap-1">
-                  <MessageContent>
-                    <MessageResponse>{getMessageText(message)}</MessageResponse>
-                  </MessageContent>
+            ) : getMessageText(message) ? (
+              <div className="relative group/content flex flex-col gap-1">
+                <MessageContent>
+                  <MessageResponse>{getMessageText(message)}</MessageResponse>
+                </MessageContent>
 
-                  {message.role === "user" && !isPending && (
-                    <div className="absolute right-0 top-0 translate-x-2 -translate-y-2 opacity-0 group-hover/content:opacity-100 transition-opacity flex items-center gap-1 bg-background shadow border rounded px-1.5 py-0.5 z-10">
-                      <button
-                        onClick={() => setEditingId(message.id)}
-                        className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                        title="Edit message & branch"
-                      >
-                        <EditIcon className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteRequest(message.id)}
-                        className="p-1.5 rounded hover:bg-muted text-destructive/70 hover:text-destructive transition-colors"
-                        title="Delete branch"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : null
-            )}
+                {message.role === "user" && !isPending && (
+                  <div className="absolute right-0 top-0 translate-x-2 -translate-y-2 opacity-0 group-hover/content:opacity-100 transition-opacity flex items-center gap-1 bg-background shadow border rounded px-1.5 py-0.5 z-10">
+                    <button
+                      onClick={() => setEditingId(message.id)}
+                      className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                      title="Edit message & branch"
+                    >
+                      <EditIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteRequest(message.id)}
+                      className="p-1.5 rounded hover:bg-muted text-destructive/70 hover:text-destructive transition-colors"
+                      title="Delete branch"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : null}
 
             <BranchSwitcher
               messageId={message.id}
@@ -221,12 +251,17 @@ export function ChatMessages({ messages, status, conversationId, setMessages, re
         ) : null}
       </ConversationContent>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Branch</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this branch? This will permanently delete this message and all subsequent messages in this branch. This action cannot be undone.
+              Are you sure you want to delete this branch? This will permanently
+              delete this message and all subsequent messages in this branch.
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

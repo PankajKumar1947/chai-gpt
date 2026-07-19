@@ -1,6 +1,6 @@
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 /** Centered placeholder for empty states with dashed border styling. */
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
@@ -9,11 +9,11 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="empty"
       className={cn(
         "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-3xl border-dashed p-12 text-center text-balance",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 /** Top section of an {@link Empty} state for icon, title, and description. */
@@ -24,7 +24,7 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("flex max-w-sm flex-col items-center gap-2", className)}
       {...props}
     />
-  )
+  );
 }
 
 const emptyMediaVariants = cva(
@@ -39,8 +39,8 @@ const emptyMediaVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
 /** Icon or illustration area within an empty state. */
 function EmptyMedia({
@@ -55,7 +55,7 @@ function EmptyMedia({
       className={cn(emptyMediaVariants({ variant, className }))}
       {...props}
     />
-  )
+  );
 }
 
 /** Primary heading text for an empty state. */
@@ -65,11 +65,11 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="empty-title"
       className={cn(
         "font-heading text-lg font-medium tracking-tight",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 /** Supporting description explaining why the area is empty. */
@@ -79,11 +79,11 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="empty-description"
       className={cn(
         "text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 /** Bottom section of an empty state for actions or extra content. */
@@ -93,11 +93,11 @@ function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="empty-content"
       className={cn(
         "flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -107,4 +107,4 @@ export {
   EmptyDescription,
   EmptyContent,
   EmptyMedia,
-}
+};

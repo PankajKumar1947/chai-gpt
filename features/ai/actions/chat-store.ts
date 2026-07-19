@@ -6,7 +6,10 @@ import { prisma } from "@/lib/db";
 
 /** Extracts plain text from an AI SDK `UIMessage` by joining all text parts. */
 function getMessageText(message: UIMessage) {
-  return message.parts.filter(isTextUIPart).map((part) => part.text).join("");
+  return message.parts
+    .filter(isTextUIPart)
+    .map((part) => part.text)
+    .join("");
 }
 
 /**
@@ -15,7 +18,7 @@ function getMessageText(message: UIMessage) {
  */
 function toUIMessageParts(
   parts: Prisma.JsonValue | null,
-  content: string
+  content: string,
 ): UIMessage["parts"] {
   const stored = parts as UIMessage["parts"] | null;
   if (Array.isArray(stored) && stored.length > 0) {
@@ -32,7 +35,7 @@ function toUIMessageParts(
  * @returns Messages ordered oldest to newest, ready for `useChat`.
  */
 export async function loadChatMessages(
-  conversationId: string
+  conversationId: string,
 ): Promise<UIMessage[]> {
   const conversation = await prisma.conversation.findUnique({
     where: { id: conversationId },
@@ -49,7 +52,9 @@ export async function loadChatMessages(
 
   let activeMessageId = conversation?.activeMessageId;
   if (!activeMessageId) {
-    const sorted = [...rows].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    const sorted = [...rows].sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+    );
     activeMessageId = sorted[sorted.length - 1]?.id;
   }
 
@@ -76,7 +81,7 @@ export async function loadChatMessages(
     const dbMeta = (row.metadata as any) || {};
     return {
       id: row.id,
-      role: row.role === "ASSISTANT" ? "assistant" : "user" as const,
+      role: row.role === "ASSISTANT" ? "assistant" : ("user" as const),
       parts: toUIMessageParts(row.parts, row.content),
       metadata: {
         parentId: row.parentId,
@@ -102,7 +107,7 @@ type SaveChatMessagesOptions = {
 export async function saveChatMessages(
   conversationId: string,
   messages: UIMessage[],
-  options: SaveChatMessagesOptions = {}
+  options: SaveChatMessagesOptions = {},
 ) {
   const { updateTitle = true } = options;
 

@@ -3,7 +3,8 @@ import { z } from "zod";
 import { tavilyClient } from "../utils/tavily";
 
 export const webSearch = tool({
-  description: "Search the web for current events, real-time details, and general information.",
+  description:
+    "Search the web for current events, real-time details, and general information.",
   inputSchema: z.object({
     query: z.string().describe("The search query to look up"),
   }),

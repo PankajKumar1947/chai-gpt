@@ -34,7 +34,11 @@ export function MessageEditor({
 
     startTransition(async () => {
       try {
-        const { newMessages } = await forkMessage(conversationId, messageId, editText.trim());
+        const { newMessages } = await forkMessage(
+          conversationId,
+          messageId,
+          editText.trim(),
+        );
         setMessages(newMessages);
         onCancel();
         void regenerate();

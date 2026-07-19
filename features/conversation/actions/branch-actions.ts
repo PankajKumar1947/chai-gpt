@@ -4,7 +4,11 @@ import { prisma } from "@/lib/db";
 import { requireUser } from "@/features/auth/action/require-user";
 import { loadChatMessages } from "@/features/ai/actions/chat-store";
 
-export async function forkMessage(conversationId: string, messageId: string, text: string) {
+export async function forkMessage(
+  conversationId: string,
+  messageId: string,
+  text: string,
+) {
   await requireUser();
 
   // Find the message to fork

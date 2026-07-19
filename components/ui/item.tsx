@@ -1,10 +1,10 @@
-import * as React from "react"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils"
-import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 /** Vertical list container for {@link Item} rows. */
 function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
@@ -14,11 +14,11 @@ function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="item-group"
       className={cn(
         "group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 /** Horizontal divider between items in a list. */
@@ -33,7 +33,7 @@ function ItemSeparator({
       className={cn("my-2", className)}
       {...props}
     />
-  )
+  );
 }
 
 const itemVariants = cva(
@@ -55,8 +55,8 @@ const itemVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
-)
+  },
+);
 
 /** Interactive list row with media, title, description, and action slots. */
 function Item({
@@ -72,7 +72,7 @@ function Item({
       {
         className: cn(itemVariants({ variant, size, className })),
       },
-      props
+      props,
     ),
     render,
     state: {
@@ -80,7 +80,7 @@ function Item({
       variant,
       size,
     },
-  })
+  });
 }
 
 const itemMediaVariants = cva(
@@ -97,8 +97,8 @@ const itemMediaVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
 /** Icon or image area on the left side of an {@link Item}. */
 function ItemMedia({
@@ -113,7 +113,7 @@ function ItemMedia({
       className={cn(itemMediaVariants({ variant, className }))}
       {...props}
     />
-  )
+  );
 }
 
 /** Main text content area of an {@link Item}. */
@@ -123,11 +123,11 @@ function ItemContent({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="item-content"
       className={cn(
         "flex flex-1 flex-col gap-1 group-data-[size=xs]/item:gap-0.5 [&+[data-slot=item-content]]:flex-none",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 /** Primary title text for an {@link Item}. */
@@ -137,11 +137,11 @@ function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="item-title"
       className={cn(
         "line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium underline-offset-4",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 /** Secondary description text below an item title. */
@@ -151,11 +151,11 @@ function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="item-description"
       className={cn(
         "line-clamp-2 text-left text-sm font-normal text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 /** Action buttons aligned to the right of an {@link Item}. */
@@ -166,7 +166,7 @@ function ItemActions({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("flex items-center gap-2", className)}
       {...props}
     />
-  )
+  );
 }
 
 /** Top row within an item for metadata or inline actions. */
@@ -176,11 +176,11 @@ function ItemHeader({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="item-header"
       className={cn(
         "flex basis-full items-center justify-between gap-2",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 /** Bottom row within an item for metadata or inline actions. */
@@ -190,11 +190,11 @@ function ItemFooter({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="item-footer"
       className={cn(
         "flex basis-full items-center justify-between gap-2",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -208,4 +208,4 @@ export {
   ItemDescription,
   ItemHeader,
   ItemFooter,
-}
+};

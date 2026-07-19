@@ -3,10 +3,21 @@
 import React, { useState, useTransition } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { toast } from "sonner";
-import { switchBranch, renameBranch } from "@/features/conversation/actions/branch-actions";
+import {
+  switchBranch,
+  renameBranch,
+} from "@/features/conversation/actions/branch-actions";
 import { loadChatMessages } from "@/features/ai/actions/chat-store";
 import type { UIMessage } from "ai";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 export type BranchMetadata = {
@@ -24,7 +35,13 @@ type BranchSwitcherProps = {
   onDeleteRequest: (messageId: string) => void;
 };
 
-export function BranchSwitcher({ messageId, metadata, conversationId, setMessages, onDeleteRequest }: BranchSwitcherProps) {
+export function BranchSwitcher({
+  messageId,
+  metadata,
+  conversationId,
+  setMessages,
+  onDeleteRequest,
+}: BranchSwitcherProps) {
   const [isPending, startTransition] = useTransition();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newName, setNewName] = useState(metadata?.branchName || "");
@@ -63,18 +80,23 @@ export function BranchSwitcher({ messageId, metadata, conversationId, setMessage
     <div className="flex items-center gap-2 text-xs text-muted-foreground select-none mt-1 pl-1">
       <button
         disabled={metadata.index === 0 || isPending}
-        onClick={() => handleSwitchBranch(metadata.siblings[metadata.index - 1])}
+        onClick={() =>
+          handleSwitchBranch(metadata.siblings[metadata.index - 1])
+        }
         className="p-0.5 rounded hover:bg-muted disabled:opacity-30 transition-colors"
         title="Previous version"
       >
         <ChevronLeftIcon className="h-3.5 w-3.5" />
       </button>
       <span className="font-medium text-[11px] text-muted-foreground">
-        {metadata.branchName || `Version ${metadata.index + 1}`} ({metadata.index + 1}/{metadata.siblings.length})
+        {metadata.branchName || `Version ${metadata.index + 1}`} (
+        {metadata.index + 1}/{metadata.siblings.length})
       </span>
       <button
         disabled={metadata.index === metadata.siblings.length - 1 || isPending}
-        onClick={() => handleSwitchBranch(metadata.siblings[metadata.index + 1])}
+        onClick={() =>
+          handleSwitchBranch(metadata.siblings[metadata.index + 1])
+        }
         className="p-0.5 rounded hover:bg-muted disabled:opacity-30 transition-colors"
         title="Next version"
       >
@@ -121,7 +143,10 @@ export function BranchSwitcher({ messageId, metadata, conversationId, setMessage
           </div>
           <DialogFooter>
             <DialogClose render={<Button variant="outline">Cancel</Button>} />
-            <Button disabled={isPending || !newName.trim()} onClick={handleRename}>
+            <Button
+              disabled={isPending || !newName.trim()}
+              onClick={handleRename}
+            >
               Save
             </Button>
           </DialogFooter>
