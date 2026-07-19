@@ -34,7 +34,7 @@ export const ConversationView = ({ conversationId, initialMessages }: Conversati
         })
     }), []);
 
-    const { messages, sendMessage, status } = useChat({
+    const { messages, sendMessage, status, setMessages, regenerate } = useChat({
         id: conversationId,
         messages: initialMessages,
         transport,
@@ -61,7 +61,13 @@ export const ConversationView = ({ conversationId, initialMessages }: Conversati
             {messages.length === 0 ? (
                 <ChatEmpty />
             ) : (
-                <ChatMessages messages={messages} status={status} />
+                <ChatMessages
+                    messages={messages}
+                    status={status}
+                    conversationId={conversationId}
+                    setMessages={setMessages}
+                    regenerate={regenerate}
+                />
             )}
 
             <ChatComposer

@@ -34,16 +34,58 @@ function toUIMessageParts(
 export async function loadChatMessages(
   conversationId: string
 ): Promise<UIMessage[]> {
-  const rows = await prisma.message.findMany({
-    where: { conversationId },
-    orderBy: { createdAt: "asc" },
+  const conversation = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    select: { activeMessageId: true },
   });
 
-  return rows.map((row) => ({
-    id: row.id,
-    role: row.role === "ASSISTANT" ? "assistant" : "user",
-    parts: toUIMessageParts(row.parts, row.content),
-  }));
+  const rows = await prisma.message.findMany({
+    where: { conversationId },
+  });
+
+  if (rows.length === 0) return [];
+
+  const messageMap = new Map(rows.map((row) => [row.id, row]));
+
+  let activeMessageId = conversation?.activeMessageId;
+  if (!activeMessageId) {
+    const sorted = [...rows].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    activeMessageId = sorted[sorted.length - 1]?.id;
+  }
+
+  const chain: typeof rows = [];
+  let currentId: string | null | undefined = activeMessageId;
+  const visited = new Set<string>();
+  while (currentId && !visited.has(currentId)) {
+    const msg = messageMap.get(currentId);
+    if (!msg) break;
+    chain.push(msg);
+    visited.add(currentId);
+    currentId = msg.parentId;
+  }
+
+  chain.reverse();
+
+  return chain.map((row) => {
+    const siblings = rows
+      .filter((r) => r.parentId === row.parentId)
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    const siblingIds = siblings.map((s) => s.id);
+    const index = siblings.findIndex((s) => s.id === row.id);
+
+    const dbMeta = (row.metadata as any) || {};
+    return {
+      id: row.id,
+      role: row.role === "ASSISTANT" ? "assistant" : "user" as const,
+      parts: toUIMessageParts(row.parts, row.content),
+      metadata: {
+        parentId: row.parentId,
+        siblings: siblingIds,
+        index,
+        branchName: dbMeta.branchName,
+      },
+    };
+  });
 }
 
 type SaveChatMessagesOptions = {
@@ -64,34 +106,49 @@ export async function saveChatMessages(
 ) {
   const { updateTitle = true } = options;
 
+  const conversation = await prisma.conversation.findUniqueOrThrow({
+    where: { id: conversationId },
+    select: { title: true, activeMessageId: true },
+  });
+
+  let lastSavedId = conversation.activeMessageId || null;
+
   for (const message of messages) {
     if (message.role === "system") continue;
 
     const content = getMessageText(message);
     const role = message.role === "assistant" ? "ASSISTANT" : "USER";
 
-    await prisma.message.upsert({
+    const existing = await prisma.message.findUnique({
       where: { id: message.id },
-      create: {
-        id: message.id,
-        conversationId,
-        role,
-        status: "COMPLETE",
-        content,
-        parts: message.parts as Prisma.InputJsonValue,
-      },
-      update: {
-        content,
-        parts: message.parts as Prisma.InputJsonValue,
-        status: "COMPLETE",
-      },
+      select: { id: true, parentId: true },
     });
-  }
 
-  const conversation = await prisma.conversation.findUniqueOrThrow({
-    where: { id: conversationId },
-    select: { title: true },
-  });
+    if (existing) {
+      await prisma.message.update({
+        where: { id: message.id },
+        data: {
+          content,
+          parts: message.parts as Prisma.InputJsonValue,
+          status: "COMPLETE",
+        },
+      });
+      lastSavedId = existing.id;
+    } else {
+      await prisma.message.create({
+        data: {
+          id: message.id,
+          conversationId,
+          role,
+          status: "COMPLETE",
+          content,
+          parts: message.parts as Prisma.InputJsonValue,
+          parentId: lastSavedId,
+        },
+      });
+      lastSavedId = message.id;
+    }
+  }
 
   const firstUser = messages.find((message) => message.role === "user");
   const firstUserText = firstUser ? getMessageText(firstUser).trim() : "";
@@ -100,6 +157,7 @@ export async function saveChatMessages(
     where: { id: conversationId },
     data: {
       lastMessageAt: new Date(),
+      activeMessageId: lastSavedId,
       title:
         updateTitle && conversation.title === "New Chat" && firstUserText
           ? firstUserText.slice(0, 48)

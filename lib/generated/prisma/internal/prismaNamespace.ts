@@ -689,6 +689,7 @@ export const ConversationScalarFieldEnum = {
   systemPrompt: 'systemPrompt',
   isPinned: 'isPinned',
   isArchived: 'isArchived',
+  activeMessageId: 'activeMessageId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   lastMessageAt: 'lastMessageAt'
@@ -705,6 +706,7 @@ export const MessageScalarFieldEnum = {
   content: 'content',
   parts: 'parts',
   metadata: 'metadata',
+  parentId: 'parentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
