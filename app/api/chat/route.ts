@@ -44,10 +44,20 @@ export async function POST(req: Request) {
         await saveChatMessages(id, [message]);
     }
 
+    const sanitizedMessages = messages.filter((msg) => {
+        if (msg.role === "assistant") {
+            const hasContent = msg.parts.some(
+                (part) => part.type === "text" && part.text.trim().length > 0
+            );
+            return hasContent;
+        }
+        return true;
+    });
+
     const result =  streamText({
         model: getChatModel(conversation.model),
         system: conversation.systemPrompt ?? "You are ChaiGpt , a helpful assistant",
-        messages: await convertToModelMessages(messages),
+        messages: await convertToModelMessages(sanitizedMessages),
     });
 
     result.consumeStream();
